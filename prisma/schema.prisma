@@ -11,5 +11,6 @@ model Task {
   id        String  @id @default(uuid())
   text      String
   completed Boolean @default(false)
+  category  String   @default("now")
   createdAt DateTime @default(now())
 }

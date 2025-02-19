@@ -4,6 +4,7 @@ type IconButtonSize = 'large' | 'medium' | 'small';
 type IconButtonVariant = 'primary' | 'secondary' | 'ghost';
 
 interface IconButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+  ariaLabel: string;
   extraClasses?: string;
   icon: React.ReactNode;
   onClick?: () => void;
@@ -11,7 +12,7 @@ interface IconButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> 
   variant?: IconButtonVariant;
 }
 
-export default function IconButton({ icon, onClick, size = 'large', variant = 'primary', extraClasses }: IconButtonProps) {
+export default function IconButton({ ariaLabel, icon, onClick, size = 'large', variant = 'primary', extraClasses }: IconButtonProps) {
   let buttonClasses = `flex shrink-0 items-center justify-center transition-all focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 aria-disabled:cursor-not-allowed aria-disabled:opacity-50 ${extraClasses}`;
 
   switch (variant) {
@@ -40,6 +41,7 @@ export default function IconButton({ icon, onClick, size = 'large', variant = 'p
 
   return (
     <button
+      aria-label={ariaLabel}
       className={`${buttonClasses}`}
       onClick={onClick}
     >

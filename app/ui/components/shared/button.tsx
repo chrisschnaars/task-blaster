@@ -13,7 +13,7 @@ interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
 }
 
 export default function Button({ children, isDisabled, onClick, size = 'large', variant = 'primary' }: ButtonProps) {
-  let buttonClasses = 'flex shrink-0 items-center rounded-md text-sm font-semibold transition-all focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 aria-disabled:cursor-not-allowed aria-disabled:opacity-50';
+  let buttonClasses = 'flex shrink-0 items-center rounded-md text-sm leading-none font-semibold transition-all focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 aria-disabled:cursor-not-allowed aria-disabled:opacity-50';
 
   switch (variant) {
     case 'primary':

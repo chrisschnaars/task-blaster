@@ -1,9 +1,9 @@
 import { useState } from "react";
-import InlineTaskForm from "@/app/ui/components/tasks/inline-task-form";
+import InlineTaskForm from "@/app/ui/components/tasks/create-edit-task-form";
 import Button from "@/app/ui/components/shared/button";
 
 interface ListHeaderProps {
-  handleCreateTask: () => void;
+  handleCreateTask: (text:string, category:string) => void;
   label: string;
 }
 

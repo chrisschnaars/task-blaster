@@ -2,16 +2,15 @@
 
 import { useEffect, useState } from "react";
 
-import { Add } from '@/app/ui/components/icons';
+
 import Header from "@/app/ui/components/shared/header"
-import InlineTaskForm from "@/app/ui/components/tasks/inline-task-form";
-import ListHeader from "@/app/ui/components/task-list/header";
-import Task from "@/app/ui/components/tasks/task"
+
+import ListHeader from "../ui/components/task-list/list-header";
+import TasksSection from "@/app/ui/components/task-list/tasks-section";
 import { Task as TaskTypes } from "@/types/global";
 
-export default function Dashboard() {
+export default function Tasks() {
   const [tasks, setTasks] = useState<TaskTypes[]>([]);
-  const [showInlineForm, setShowInlineForm] = useState(false);
 
   useEffect(() => {
     const fetchTasks = async () => {
@@ -27,25 +26,36 @@ export default function Dashboard() {
     fetchTasks();
   }, []);
 
-  const handleCreateTask = async (text: string) => {
-    const response = await fetch("/api/tasks", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ text: text }),
-    });
+  // Group tasks by category
+  const groupedTasks = {
+    now: tasks.filter((task) => task.category === "now"),
+    soon: tasks.filter((task) => task.category === "soon"),
+    later: tasks.filter((task) => task.category === "later"),
+  };
 
-    if (response.ok) {
+  const handleCreateTask = async (text: string, category: string) => {
+    try {
+      const response = await fetch("/api/tasks/createTask", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ text: text, category: category }),
+      });
+
+      if (!response.ok) throw new Error(`Failed to create task`);
+
       const addedTask = await response.json();
       setTasks([...tasks, addedTask]);
+    } catch(error) {
+      console.error("Error:", error);
     }
   };
 
-  const handleUpdateTask = async (id: string, text: string) => {
+  const handleUpdateTask = async (id: string, text: string, category: string) => {
     try {
       const response = await fetch("/api/tasks/updateTask", {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ id: id, text: text}),
+        body: JSON.stringify({ id: id, text: text, category: category}),
       });
 
       if (!response.ok) throw new Error(`Failed to update task`);
@@ -113,35 +123,23 @@ export default function Dashboard() {
   return (
     <div>
       <Header />
+
       <div className="wrapper">
 
         <ListHeader label="Doing" handleCreateTask={handleCreateTask} />
 
-        <div className="mt-8">
-          <h2 className="heading-md">Now</h2>
-          <ul className="mt-2">
-            {tasks.map((task) => (
-              <Task
-                key={task.id}
-                task={task}
-                onDelete={() => handleDeleteTask(task.id)}
-                onToggle={() => handleToggleTask(task.id, task.completed)}
-                handleUpdateTask={handleUpdateTask}
-              />
-            ))}
-          </ul>
-          {showInlineForm ? (
-            <InlineTaskForm handleCreateTask={handleCreateTask} onClose={() => setShowInlineForm(false)} />
-          ) : (
-            <button onClick={() => setShowInlineForm(true)} className="flex items-center gap-2 p-2 w-full opacity-50 hover:opacity-100">
-              <div className="p-[2px]">
-                <Add className="text-black size-4" />
-              </div>
-              Add task
-            </button>
-          )}
+        <div className="space-y-6">
+          {Object.entries(groupedTasks).map(([category, tasks]) => (
+            <TasksSection
+              key={category}
+              category={category}
+              handleCreateTask={handleCreateTask}
+              handleDeleteTask={handleDeleteTask}
+              handleToggleTask={handleToggleTask}
+              handleUpdateTask={handleUpdateTask}
+              tasks={tasks} />
+          ))}
         </div>
-
       </div>
     </div>
   );

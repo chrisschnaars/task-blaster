@@ -28,7 +28,8 @@
     "**/*.ts",
     "**/*.tsx",
     ".next/types/**/*.ts",
-    "types/global.d.ts"
+    "types/global.d.ts",
+    "scripts/updateTasks.mjs"
   ],
   "exclude": ["node_modules"]
 }
