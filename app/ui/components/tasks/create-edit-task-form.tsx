@@ -4,15 +4,16 @@ import Select from "@/app/ui/components/shared/select";
 import { Task } from "@/types/global";
 
 interface CreateEditTaskForm {
+  defaultCategory?: string;
   handleCreateTask?: (text: string, category: string) => void;
   handleUpdateTask?: (id: string, text: string, category: string) => void;
   onClose?: () => void;
   task?: Task;
 }
 
-export default function CreateEditTaskForm({ handleCreateTask, handleUpdateTask, onClose, task }: CreateEditTaskForm) {
+export default function CreateEditTaskForm({ defaultCategory = "now", handleCreateTask, handleUpdateTask, onClose, task }: CreateEditTaskForm) {
   const [text, setText] = useState(task ? task.text : "");
-  const [category, setCategory] = useState(task ? task.category : "now");
+  const [category, setCategory] = useState(task ? task.category : defaultCategory);
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();

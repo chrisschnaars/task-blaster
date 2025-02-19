@@ -35,7 +35,7 @@ export default function TasksSection({ category, handleCreateTask, handleDeleteT
       )}
 
       {showInlineForm ? (
-        <CreateEditTaskForm handleCreateTask={handleCreateTask} onClose={() => setShowInlineForm(false)} />
+        <CreateEditTaskForm defaultCategory={category} handleCreateTask={handleCreateTask} onClose={() => setShowInlineForm(false)} />
       ) : (
         <button onClick={() => setShowInlineForm(true)} className="flex items-center gap-2 p-2 w-full opacity-50 hover:opacity-100">
           <div className="p-[2px]">
