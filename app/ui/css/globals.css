@@ -2,31 +2,70 @@
 @tailwind components;
 @tailwind utilities;
 
-:root {
-}
 
-@media (prefers-color-scheme: dark) {
+@layer base {
   :root {
+    --color-surface-primary: theme('colors.gray.50');
+    --color-surface-elevated: theme('colors.white');
+    --color-text-primary: theme('colors.gray.900');
+    --color-text-muted: theme('colors.gray.500');
+    --color-text-inverted: theme('colors.white');
+    --color-border: theme('colors.gray.400');
+    --color-primary: theme('colors.indigo.500');
+    --color-checkbox-bg: theme('colors.gray.50');
+    --color-checkbox-bg-hover: theme('colors.gray.100');
+    --color-checkbox-bg-checked: theme('colors.indigo.500');
+    --color-checkbox-border: theme('colors.gray.500');
+    --color-checkbox-border-checked: theme('colors.indigo.500');
+    --color-button-bg: theme('colors.gray.50');
+    --color-button-bg-hover: theme('colors.gray.100');
+    --color-button-border: theme('colors.gray.200');
+    --color-button-bg-primary: theme('colors.indigo.500');
+    --color-button-bg-primary-hover: theme('colors.indigo.600');
+    --color-button-border-primary: theme('colors.indigo.400');
   }
-}
 
-body {
-  @apply bg-stone-50 dark:bg-slate-900 font-sans;
-}
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --color-surface-primary: #0A0A0B;
+      --color-surface-elevated: rgba(255, 255, 255, 0.045);
+      --color-text-primary: #ECECEE;
+      --color-text-muted: #84848B;
+      --color-text-inverted: #0A0A0B;
+      --color-border: #343437;
+      --color-primary: theme('colors.indigo.400');
+      --color-checkbox-bg: #0A0A0B;
+      --color-checkbox-bg-hover: #1D1D20;
+      --color-checkbox-bg-checked: theme('colors.indigo.400');
+      --color-checkbox-border: #3E3E42;
+      --color-checkbox-border-checked: theme('colors.indigo.400');
+      --color-button-bg: #0A0A0B;
+      --color-button-bg-hover: #1D1D20;
+      --color-button-border: #343437;
+      --color-button-bg-primary: theme('colors.indigo.400');
+      --color-button-bg-primary-hover: theme('colors.indigo.500');
+      --color-button-border-primary: theme('colors.indigo.600');
+    }
+  }
 
-.wrapper {
-  @apply p-8 max-w-xl mx-auto bg-white rounded-xl shadow;
-}
+  body {
+    @apply bg-[var(--color-surface-primary)] text-[var(--color-text-primary)] font-sans;
+  }
 
-/* Headers */
-.heading-lg {
-  @apply text-2xl font-semibold;
-}
+  .task-list {
+    @apply bg-[var(--color-surface-elevated)] p-8 max-w-xl mx-auto rounded-xl shadow;
+  }
 
-.heading-md {
-  @apply text-xl font-semibold;
-}
+  /* Headers */
+  .heading-lg {
+    @apply text-2xl font-semibold;
+  }
 
-.task {
-  @apply flex items-center;
+  .heading-md {
+    @apply text-xl font-semibold;
+  }
+
+  .task {
+    @apply flex items-center;
+  }
 }

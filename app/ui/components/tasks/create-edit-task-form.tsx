@@ -32,22 +32,22 @@ export default function CreateEditTaskForm({ defaultCategory = "now", handleCrea
   }
 
   return (
-    <form onSubmit={handleSubmit} className="border border-gray-200 rounded-lg overflow-hidden">
+    <form onSubmit={handleSubmit} className="bg-[var(--color-surface-elevated)] border border-[var(--color-border)] rounded-lg overflow-hidden">
       <input
         autoFocus
-        className="p-2 w-full focus-visible:!outline-none"
+        className="bg-transparent p-2 w-full focus-visible:!outline-none"
         onChange={(e) => setText(e.target.value)}
         placeholder="Add task..."
         type="text"
         value={text}
       />
-      <div className="flex items-center gap-4 justify-between p-2 border-t border-gray-200">
+      <div className="flex items-center gap-4 justify-between p-2 border-t border-[var(--color-border)]">
         <Select value={category} onChange={(e) => setCategory(e.target.value)} className="h-8 bg-gray-100 border px-2 rounded-md">
           <option value="now">Now</option>
           <option value="soon">Soon</option>
           <option value="later">Later</option>
         </Select>
-        <div className="flex gap-2 items-center justify-end ">
+        <div className="flex gap-2 items-center justify-end">
           <Button onClick={onClose} type="button" variant="secondary">Cancel</Button>
           <Button type="submit" variant="primary">{`${task ? "Update" : "Add"} task`}</Button>
         </div>

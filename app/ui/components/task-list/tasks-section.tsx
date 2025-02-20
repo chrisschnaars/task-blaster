@@ -21,7 +21,7 @@ export default function TasksSection({ category, handleCreateTask, handleDeleteT
     <div key={category} className="mt-8">
       <h2 className="heading-md capitalize">{category}</h2>
       {tasks.length > 0 && (
-        <ul>
+        <ul className="mt-2">
           {tasks.map((task) => (
             <Task
               key={task.id}
@@ -37,9 +37,9 @@ export default function TasksSection({ category, handleCreateTask, handleDeleteT
       {showInlineForm ? (
         <CreateEditTaskForm defaultCategory={category} handleCreateTask={handleCreateTask} onClose={() => setShowInlineForm(false)} />
       ) : (
-        <button onClick={() => setShowInlineForm(true)} className="flex items-center gap-2 p-2 w-full opacity-50 hover:opacity-100">
+        <button onClick={() => setShowInlineForm(true)} className="group flex items-center gap-2 p-2 w-full text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)] transition">
           <div className="p-[2px]">
-            <SvgAdd className="text-black size-4" />
+            <SvgAdd className="size-4" />
           </div>
           Add task
         </button>

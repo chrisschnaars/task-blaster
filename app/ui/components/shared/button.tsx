@@ -1,10 +1,12 @@
 import React from 'react';
 
-type ButtonSize = 'large' | 'medium';
-type ButtonVariant = 'primary' | 'secondary';
+type ButtonSize = 'large' | 'medium' | 'small';
+type ButtonVariant = 'primary' | 'secondary' | 'ghost';
 
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
-  children: React.ReactNode;
+  ariaLabel?: string;
+  children?: React.ReactNode;
+  hidden?: boolean;
   icon?: React.ReactNode;
   isDisabled?: boolean;
   onClick?: () => void;
@@ -12,23 +14,32 @@ interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: ButtonVariant;
 }
 
-export default function Button({ children, isDisabled, onClick, size = 'large', variant = 'primary' }: ButtonProps) {
-  let buttonClasses = 'flex shrink-0 items-center rounded-md text-sm leading-none font-semibold transition-all focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 aria-disabled:cursor-not-allowed aria-disabled:opacity-50';
+export default function Button({ ariaLabel, children, hidden, icon, isDisabled, onClick, size = 'large', variant = 'primary' }: ButtonProps) {
+  let buttonClasses = 'flex shrink-0 items-center gap-2 rounded-lg text-sm leading-none font-semibold border transition-all focus-visible:outline focus-visible:outline-[var(--color-primary)] focus-visible:outline-2 focus-visible:outline-offset-2 aria-disabled:cursor-not-allowed aria-disabled:opacity-50';
 
   switch (variant) {
     case 'primary':
-      buttonClasses += ' bg-indigo-500 hover:bg-indigo-600 active:bg-indigo-600 text-white focus-visible:outline-indigo-500';
+      buttonClasses += ' bg-[var(--color-button-bg-primary)] hover-focus:bg-[var(--color-button-bg-primary-hover)] active:bg-[var(--color-button-bg-primary-hover)] border-[var(--color-button-border-primary)] text-[var(--color-text-inverted)]';
       break;
     case 'secondary':
-      buttonClasses += ' bg-gray-100 hover:bg-gray-200 active:bg-gray-200 focus-visible:outline-indigo-500';
+      buttonClasses += ' bg-[var(--color-button-bg)] hover-focus:bg-[var(--color-button-bg-hover)] active:bg-[var(--color-button-bg-hover)] border-[var(--color-button-border)] text-[var(--color-text-primary)]';
+      break;
+    case 'ghost':
+      buttonClasses += ' bg-transparent] hover-focus:bg-[var(--color-button-bg-hover)] active:bg-[var(--color-button-bg-hover)] border-none text-[var(--color-text-primary)]';
       break;
   }
 
   switch (size) {
     case 'large':
-      buttonClasses += ' h-10 px-4';
+      buttonClasses += ` rounded-lg h-10 ${children ? "px-4" : "w-10"}`;
     case 'medium':
-      buttonClasses += ' h-8 px-3';
+      buttonClasses += ` rounded-lg h-8 ${children ? "px-3" : "w-8"}`;
+    case 'small':
+      buttonClasses += ` rounded-md h-6 ${children ? "px-3" : "p-[3px] w-6"}`;
+  }
+
+  if (hidden) {
+    buttonClasses += ' opacity-0 group-hover:opacity-100 hover-focus:opacity-100'
   }
 
   return (
@@ -36,8 +47,18 @@ export default function Button({ children, isDisabled, onClick, size = 'large', 
       className={`${buttonClasses}`}
       onClick={onClick}
       disabled={isDisabled}
+      aria-label={ariaLabel}
     >
-      {children}
+      {icon && (
+        <>
+          {icon}
+        </>
+      )}
+      {children && (
+        <span className="mb-[1px]">
+          {children}
+        </span>
+      )}
     </button>
   );
 }

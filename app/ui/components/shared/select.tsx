@@ -11,7 +11,7 @@ interface SelectProps extends React.SelectHTMLAttributes<HTMLSelectElement> {
 }
 
 export default function Select({ children, isDisabled, onChange, variant = 'medium', value }: SelectProps) {
-  let selectClasses = 'flex shrink-0 items-center rounded-md text-sm leading-none font-semibold bg-gray-100 hover:bg-gray-200 active:bg-gray-200 focus-visible:outline-indigo-500 transition-all focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 aria-disabled:cursor-not-allowed aria-disabled:opacity-50';
+  let selectClasses = 'flex shrink-0 items-center rounded-lg text-sm leading-none font-semibold bg-[var(--color-button-bg)] hover-focus:bg-[var(--color-button-bg-hover)] active:bg-[var(--color-button-bg-hover)] border border-[var(--color-button-border)] text-[var(--color-text-primary)] transition-all focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 aria-disabled:cursor-not-allowed aria-disabled:opacity-50';
 
   switch (variant) {
     case 'large':

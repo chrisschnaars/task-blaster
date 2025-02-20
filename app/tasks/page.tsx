@@ -124,7 +124,7 @@ export default function Tasks() {
     <div>
       <Header />
 
-      <div className="wrapper">
+      <div className="task-list">
 
         <ListHeader label="Doing" handleCreateTask={handleCreateTask} />
 
