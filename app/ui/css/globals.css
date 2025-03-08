@@ -7,10 +7,11 @@
   :root {
     --color-surface-primary: theme('colors.gray.50');
     --color-surface-elevated: theme('colors.white');
+    --color-surface-elevated-2: theme('colors.gray.50');
     --color-text-primary: theme('colors.gray.900');
     --color-text-muted: theme('colors.gray.500');
     --color-text-inverted: theme('colors.white');
-    --color-border: theme('colors.gray.400');
+    --color-border: theme('colors.gray.200');
     --color-primary: theme('colors.indigo.500');
     --color-checkbox-bg: theme('colors.gray.50');
     --color-checkbox-bg-hover: theme('colors.gray.100');
@@ -28,7 +29,7 @@
   @media (prefers-color-scheme: dark) {
     :root {
       --color-surface-primary: #0A0A0B;
-      --color-surface-elevated: rgba(255, 255, 255, 0.045);
+      --color-surface-elevated: rgba(255, 255, 255, 0.05);
       --color-text-primary: #ECECEE;
       --color-text-muted: #84848B;
       --color-text-inverted: #0A0A0B;
@@ -50,6 +51,27 @@
 
   body {
     @apply bg-[var(--color-surface-primary)] text-[var(--color-text-primary)] font-sans;
+  }
+
+  input[type='checkbox']:not(.default\:none),
+  input[type='radio']:not(.default\:none),
+  .checkbox {
+    @apply h-5 w-5 rounded-sm border border-[var(--color-checkbox-border)] bg-[var(--checkbox-bg)] hover:bg-[var(--checkbox-bg-hover)] transition;
+
+    &:checked,
+    &.checkbox\:checked,
+    &:indeterminate:not([type='radio']) {
+      @apply bg-[var(--color-checkbox-bg-checked)] border-[var(--color-checkbox-border-checked)];
+    }
+
+    &:disabled {
+      @apply opacity-50 cursor-not-allowed;
+
+      ~ div,
+      ~ span {
+        @apply cursor-not-allowed;
+      }
+    }
   }
 
   .task-list {

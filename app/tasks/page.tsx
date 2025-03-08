@@ -33,12 +33,12 @@ export default function Tasks() {
     later: tasks.filter((task) => task.category === "later"),
   };
 
-  const handleCreateTask = async (text: string, category: string) => {
+  const handleCreateTask = async (text: string, category: string, subtasks: string[]) => {
     try {
       const response = await fetch("/api/tasks/createTask", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ text: text, category: category }),
+        body: JSON.stringify({ text: text, category: category, subtasks: subtasks }),
       });
 
       if (!response.ok) throw new Error(`Failed to create task`);
@@ -50,12 +50,12 @@ export default function Tasks() {
     }
   };
 
-  const handleUpdateTask = async (id: string, text: string, category: string) => {
+  const handleUpdateTask = async (id: string, text: string, category: string, subtasks: string[]) => {
     try {
       const response = await fetch("/api/tasks/updateTask", {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ id: id, text: text, category: category}),
+        body: JSON.stringify({ id: id, text: text, category: category, subtasks: subtasks}),
       });
 
       if (!response.ok) throw new Error(`Failed to update task`);
@@ -70,36 +70,65 @@ export default function Tasks() {
     }
   };
 
-  const handleDeleteTask = async (id: string) => {
+  const handleDeleteTask = async (taskId: string, parentId: string | null) => {
     try {
-      // Optimistically update UI
-      setTasks(tasks.filter(task => task.id !== id));
+      // Check if deleting a subtask
+      if (parentId !== null) {
+        setTasks((prevTasks) =>
+          prevTasks.map((task) =>
+            task.id === parentId
+              ? { ...task, subtasks: task.subtasks.filter((sub) => sub.id !== taskId) }
+              : task
+          )
+        );
+      } else {
+        // If a parent task is being deleted
+        setTasks((prevTasks) => prevTasks.filter((task) => task.id !== taskId));
+      }
 
       // Send DELETE request to the API
       const response = await fetch("/api/tasks/deleteTask", {
         method: "DELETE",
-        body: JSON.stringify({ id }),
+        body: JSON.stringify({ taskId, parentId }),
         headers: { "Content-Type": "application/json" },
       });
 
-
       if (!response.ok) {
-        console.log(response)
         throw new Error("Failed to delete task");
       }
     } catch (error) {
       console.error("Error deleting task:", error);
       // Rollback UI change if API fails
-      setTasks(prev => [...prev, tasks.find(task => task.id === id)!]);
+      setTasks(prev => [...prev, tasks.find(task => task.id === taskId)!]);
     }
   };
 
-  const handleToggleTask = async (id: string, completed: boolean) => {
+  const handleToggleTask = async (id: string, parentId: string | null, completed: boolean) => {
     try {
-      // Optimistically update UI
-      setTasks(tasks.map(task =>
-        task.id === id ? { ...task, completed: !completed } : task
-      ));
+      setTasks((prevTasks) =>
+        prevTasks.map((task) => {
+          // Handling parent task
+          if (task.id === id && !parentId) {
+            return {...task, completed: !completed}
+          }
+
+          // Handle subtask
+          if (task.id === parentId) {
+            const updatedSubtasks = task.subtasks.map((sub) =>
+              sub.id === id ? { ...sub, completed: !completed } : sub
+            );
+
+            console.log(updatedSubtasks)
+
+            return {
+              ...task,
+              subtasks: updatedSubtasks,
+            };
+          }
+
+          return task;
+        })
+      );
 
       // Send API request to update in database
       const response = await fetch("/api/tasks/toggleTask", {
@@ -114,9 +143,30 @@ export default function Tasks() {
     } catch (error) {
       console.error("Error toggling task:", error);
       // Rollback UI change if API fails
-      setTasks(tasks.map(task =>
-        task.id === id ? { ...task, completed } : task
-      ));
+      setTasks((prevTasks) =>
+        prevTasks.map((task) => {
+          // Handling parent task
+          if (task.id === id && !parentId) {
+            return {...task, completed: completed}
+          }
+
+          // Handle subtask
+          if (task.id === parentId) {
+            const updatedSubtasks = task.subtasks.map((sub) =>
+              sub.id === id ? { ...sub, completed: completed } : sub
+            );
+
+            console.log(updatedSubtasks)
+
+            return {
+              ...task,
+              subtasks: updatedSubtasks,
+            };
+          }
+
+          return task;
+        })
+      );
     }
   };
 

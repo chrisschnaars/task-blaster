@@ -6,7 +6,8 @@ const prisma = new PrismaClient();
 export async function GET() {
   try {
     const tasks = await prisma.task.findMany({
-      orderBy: { createdAt: "asc" }, // Optional: sort by creation time
+      orderBy: { createdAt: "asc" }, //
+      include: { subtasks: true }, // Include subtasks in the response
     });
 
     return NextResponse.json(tasks, { status: 200 });

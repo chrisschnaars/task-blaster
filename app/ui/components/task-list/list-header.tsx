@@ -1,9 +1,9 @@
 import { useState } from "react";
-import InlineTaskForm from "@/app/ui/components/tasks/create-edit-task-form";
-import Button from "@/app/ui/components/shared/button";
+import CreateEditTaskForm from "@/app/ui/components/tasks/create-edit-task-form";
+import { Button } from "@/app/ui/components/shared/button";
 
 interface ListHeaderProps {
-  handleCreateTask: (text:string, category:string) => void;
+  handleCreateTask: (text: string, category: string, subtasks: string[]) => void;
   label: string;
 }
 
@@ -21,7 +21,7 @@ export default function ListHeader({ label, handleCreateTask }: ListHeaderProps)
 
       {showTaskForm && (
         <div className="my-4">
-          <InlineTaskForm handleCreateTask={handleCreateTask} onClose={() => setShowTaskForm(false)} />
+          <CreateEditTaskForm handleCreateTask={handleCreateTask} onClose={() => setShowTaskForm(false)} />
         </div>
       )}
     </>

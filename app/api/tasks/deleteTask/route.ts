@@ -6,15 +6,28 @@ const prisma = new PrismaClient();
 export async function DELETE(req: Request) {
   try {
     const body = await req.json();
-    const { id } = body;
+    const { taskId, parentId } = body;
 
-    if (typeof id !== "string") {
+    if (typeof taskId !== "string") {
       return NextResponse.json({ error: "Invalid task ID" }, { status: 400 });
     }
 
-    await prisma.task.delete({
-      where: { id },
-    });
+    if (parentId) {
+      // Delete only the subtask from the parent task
+      await prisma.task.update({
+        where: { id: parentId },
+        data: {
+          subtasks: {
+            delete: { id: taskId },
+          },
+        },
+      });
+    } else {
+      // Delete the entire task
+      await prisma.task.delete({
+        where: { id: taskId },
+      });
+    }
 
     return NextResponse.json({ success: true }, { status: 200 });
   } catch (error) {

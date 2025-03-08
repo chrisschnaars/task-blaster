@@ -6,7 +6,7 @@ const prisma = new PrismaClient();
 export async function PATCH(req: Request) {
   try {
     const body = await req.json();
-    const { id, text, category } = body;
+    const { id, text, category, subtasks } = body;
 
     if (!id || typeof text !== "string") {
       return NextResponse.json({ error: "Invalid input" }, { status: 400 });
@@ -17,7 +17,7 @@ export async function PATCH(req: Request) {
 
     const updatedTask = await prisma.task.update({
       where: { id },
-      data: { text, category },
+      data: { text, category, subtasks },
     });
 
     return NextResponse.json(updatedTask, { status: 200 });

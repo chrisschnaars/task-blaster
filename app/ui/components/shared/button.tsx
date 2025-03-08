@@ -1,6 +1,6 @@
 import React from 'react';
 
-type ButtonSize = 'large' | 'medium' | 'small';
+type ButtonSize = 'large' | 'medium' | 'small' | 'xsmall';
 type ButtonVariant = 'primary' | 'secondary' | 'ghost';
 
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
@@ -9,13 +9,15 @@ interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   hidden?: boolean;
   icon?: React.ReactNode;
   isDisabled?: boolean;
-  onClick?: () => void;
+  onClick?: React.MouseEventHandler;
   size?: ButtonSize;
   variant?: ButtonVariant;
 }
 
-export default function Button({ ariaLabel, children, hidden, icon, isDisabled, onClick, size = 'large', variant = 'primary' }: ButtonProps) {
-  let buttonClasses = 'flex shrink-0 items-center gap-2 rounded-lg text-sm leading-none font-semibold border transition-all focus-visible:outline focus-visible:outline-[var(--color-primary)] focus-visible:outline-2 focus-visible:outline-offset-2 aria-disabled:cursor-not-allowed aria-disabled:opacity-50';
+export type Ref = HTMLButtonElement;
+
+export const Button = React.forwardRef<Ref, ButtonProps>(({ariaLabel, children, hidden, icon, isDisabled, onClick, size = 'large', variant = 'primary'}, ref) => {
+  let buttonClasses = 'flex shrink-0 items-center justify-center gap-2 text-sm leading-none font-semibold border transition-all focus-visible:outline focus-visible:outline-[var(--color-primary)] focus-visible:outline-2 focus-visible:outline-offset-2 aria-disabled:cursor-not-allowed aria-disabled:opacity-50';
 
   switch (variant) {
     case 'primary':
@@ -35,7 +37,9 @@ export default function Button({ ariaLabel, children, hidden, icon, isDisabled, 
     case 'medium':
       buttonClasses += ` rounded-lg h-8 ${children ? "px-3" : "w-8"}`;
     case 'small':
-      buttonClasses += ` rounded-md h-6 ${children ? "px-3" : "p-[3px] w-6"}`;
+      buttonClasses += ` rounded-md h-7 ${children ? "px-3" : "w-7"}`;
+    case 'xsmall':
+      buttonClasses += ` rounded-md h-6 text-[13px] ${children ? "px-3" : "w-6"}`;
   }
 
   if (hidden) {
@@ -48,11 +52,12 @@ export default function Button({ ariaLabel, children, hidden, icon, isDisabled, 
       onClick={onClick}
       disabled={isDisabled}
       aria-label={ariaLabel}
+      ref={ref}
     >
       {icon && (
-        <>
+        <span className="size-[18px]">
           {icon}
-        </>
+        </span>
       )}
       {children && (
         <span className="mb-[1px]">
@@ -60,5 +65,7 @@ export default function Button({ ariaLabel, children, hidden, icon, isDisabled, 
         </span>
       )}
     </button>
-  );
-}
+  )
+});
+
+Button.displayName = "Button";
