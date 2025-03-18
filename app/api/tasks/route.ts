@@ -6,15 +6,20 @@ const prisma = new PrismaClient();
 export async function GET() {
   try {
     const tasks = await prisma.task.findMany({
-      orderBy: { createdAt: "asc" }, //
-      include: { subtasks: true }, // Include subtasks in the response
+      orderBy: { createdAt: "asc" },
+      where: { parentId: null }, // Only fetch parent tasks
+      include: {
+        subtasks: {
+          orderBy: { createdAt: "asc" }, // Order subtasks by creation time
+        },
+      },
     });
 
     return NextResponse.json(tasks, { status: 200 });
   } catch (error) {
     console.error("Error fetching tasks:", error);
     return NextResponse.json(
-      { error: "Internal Server Error" },
+      { error: "Failed to fetch tasks" },
       { status: 500 }
     );
   }

@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
-import '@/app/ui/css/globals.css';
+import ReactQueryProvider from "@/app/ui/components/ReactQueryProvider";
+import "@/app/ui/css/globals.css";
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -13,10 +14,8 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body
-        className={`antialiased`}
-      >
-        {children}
+      <body className={`antialiased`}>
+        <ReactQueryProvider>{children}</ReactQueryProvider>
       </body>
     </html>
   );

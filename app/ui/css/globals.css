@@ -2,50 +2,51 @@
 @tailwind components;
 @tailwind utilities;
 
-
 @layer base {
   :root {
-    --color-surface-primary: theme('colors.gray.50');
-    --color-surface-elevated: theme('colors.white');
-    --color-surface-elevated-2: theme('colors.gray.50');
-    --color-text-primary: theme('colors.gray.900');
-    --color-text-muted: theme('colors.gray.500');
-    --color-text-inverted: theme('colors.white');
-    --color-border: theme('colors.gray.200');
-    --color-primary: theme('colors.indigo.500');
-    --color-checkbox-bg: theme('colors.gray.50');
-    --color-checkbox-bg-hover: theme('colors.gray.100');
-    --color-checkbox-bg-checked: theme('colors.indigo.500');
-    --color-checkbox-border: theme('colors.gray.500');
-    --color-checkbox-border-checked: theme('colors.indigo.500');
-    --color-button-bg: theme('colors.gray.50');
-    --color-button-bg-hover: theme('colors.gray.100');
-    --color-button-border: theme('colors.gray.200');
-    --color-button-bg-primary: theme('colors.indigo.500');
-    --color-button-bg-primary-hover: theme('colors.indigo.600');
-    --color-button-border-primary: theme('colors.indigo.400');
+    --color-surface-primary: theme("colors.gray.50");
+    --color-surface-elevated: theme("colors.white");
+    --color-surface-elevated-2: theme("colors.gray.50");
+    --color-text-primary: theme("colors.gray.900");
+    --color-text-muted: theme("colors.gray.500");
+    --color-text-inverted: theme("colors.white");
+    --color-border: theme("colors.gray.200");
+    --color-primary: theme("colors.indigo.500");
+    --color-checkbox-bg: theme("colors.gray.50");
+    --color-checkbox-bg-hover: theme("colors.gray.100");
+    --color-checkbox-bg-checked: theme("colors.indigo.500");
+    --color-checkbox-border: theme("colors.gray.500");
+    --color-checkbox-border-checked: theme("colors.indigo.500");
+    --color-button-bg: theme("colors.gray.50");
+    --color-button-bg-hover: theme("colors.gray.100");
+    --color-button-border: theme("colors.gray.200");
+    --color-button-bg-primary: theme("colors.indigo.500");
+    --color-button-bg-primary-hover: theme("colors.indigo.600");
+    --color-button-border-primary: theme("colors.indigo.400");
+    --space-subtask-offset: 28px;
   }
 
   @media (prefers-color-scheme: dark) {
     :root {
-      --color-surface-primary: #0A0A0B;
+      --color-surface-primary: #0a0a0b;
       --color-surface-elevated: rgba(255, 255, 255, 0.05);
-      --color-text-primary: #ECECEE;
-      --color-text-muted: #84848B;
-      --color-text-inverted: #0A0A0B;
+      --color-surface-elevated-2: rgba(255, 255, 255, 0.05);
+      --color-text-primary: #ececee;
+      --color-text-muted: #84848b;
+      --color-text-inverted: #0a0a0b;
       --color-border: #343437;
-      --color-primary: theme('colors.indigo.400');
-      --color-checkbox-bg: #0A0A0B;
-      --color-checkbox-bg-hover: #1D1D20;
-      --color-checkbox-bg-checked: theme('colors.indigo.400');
-      --color-checkbox-border: #3E3E42;
-      --color-checkbox-border-checked: theme('colors.indigo.400');
-      --color-button-bg: #0A0A0B;
-      --color-button-bg-hover: #1D1D20;
+      --color-primary: theme("colors.indigo.400");
+      --color-checkbox-bg: #0a0a0b;
+      --color-checkbox-bg-hover: #1d1d20;
+      --color-checkbox-bg-checked: theme("colors.indigo.400");
+      --color-checkbox-border: #3e3e42;
+      --color-checkbox-border-checked: theme("colors.indigo.400");
+      --color-button-bg: #0a0a0b;
+      --color-button-bg-hover: #1d1d20;
       --color-button-border: #343437;
-      --color-button-bg-primary: theme('colors.indigo.400');
-      --color-button-bg-primary-hover: theme('colors.indigo.500');
-      --color-button-border-primary: theme('colors.indigo.600');
+      --color-button-bg-primary: theme("colors.indigo.400");
+      --color-button-bg-primary-hover: theme("colors.indigo.500");
+      --color-button-border-primary: theme("colors.indigo.600");
     }
   }
 
@@ -53,14 +54,14 @@
     @apply bg-[var(--color-surface-primary)] text-[var(--color-text-primary)] font-sans;
   }
 
-  input[type='checkbox']:not(.default\:none),
-  input[type='radio']:not(.default\:none),
+  input[type="checkbox"]:not(.default\:none),
+  input[type="radio"]:not(.default\:none),
   .checkbox {
     @apply h-5 w-5 rounded-sm border border-[var(--color-checkbox-border)] bg-[var(--checkbox-bg)] hover:bg-[var(--checkbox-bg-hover)] transition;
 
     &:checked,
     &.checkbox\:checked,
-    &:indeterminate:not([type='radio']) {
+    &:indeterminate:not([type="radio"]) {
       @apply bg-[var(--color-checkbox-bg-checked)] border-[var(--color-checkbox-border-checked)];
     }
 

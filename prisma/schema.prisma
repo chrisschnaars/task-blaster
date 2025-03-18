@@ -12,10 +12,10 @@ model Task {
   text      String
   completed Boolean @default(false)
   category  String   @default("now")
-  parentId   String?   // New: Reference to parent task
+  parentId   String?   
   parent     Task?     @relation("Subtasks", fields: [parentId], references: [id])
   subtasks   Task[]    @relation("Subtasks")
 
   createdAt  DateTime  @default(now())
-  updatedAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt 
 }
