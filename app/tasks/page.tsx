@@ -40,32 +40,6 @@ export default function Tasks() {
 
   const groupedTasks = groupTasksByCategory(tasks);
 
-  const handleUpdateTask = async (
-    id: string,
-    text: string,
-    category: string,
-    subtasks: string[]
-  ) => {
-    try {
-      const response = await fetch("/api/tasks/updateTask", {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          id: id,
-          text: text,
-          category: category,
-          subtasks: subtasks,
-        }),
-      });
-
-      if (!response.ok) throw new Error(`Failed to update task`);
-
-      const updatedTask = await response.json();
-    } catch (error) {
-      console.error("Error:", error);
-    }
-  };
-
   return (
     <div>
       <Header />
@@ -75,12 +49,7 @@ export default function Tasks() {
 
         <div className="space-y-6">
           {Object.entries(groupedTasks).map(([category, tasks]) => (
-            <TasksSection
-              key={category}
-              category={category}
-              handleUpdateTask={handleUpdateTask}
-              tasks={tasks}
-            />
+            <TasksSection key={category} category={category} tasks={tasks} />
           ))}
         </div>
       </div>

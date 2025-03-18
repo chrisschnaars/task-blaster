@@ -7,20 +7,10 @@ import { Task as TaskTypes } from "@/types/global";
 
 interface TasksSectionProps {
   category: string;
-  handleUpdateTask: (
-    id: string,
-    text: string,
-    category: string,
-    subtasks: string[]
-  ) => void;
   tasks: Array<TaskTypes>;
 }
 
-export default function TasksSection({
-  category,
-  handleUpdateTask,
-  tasks,
-}: TasksSectionProps) {
+export default function TasksSection({ category, tasks }: TasksSectionProps) {
   const [showInlineForm, setShowInlineForm] = useState(false);
 
   return (
@@ -29,11 +19,7 @@ export default function TasksSection({
       {tasks.length > 0 && (
         <ul className="mt-2">
           {tasks.map((task) => (
-            <Task
-              key={task.id}
-              task={task}
-              handleUpdateTask={handleUpdateTask}
-            />
+            <Task key={task.id} task={task} />
           ))}
         </ul>
       )}

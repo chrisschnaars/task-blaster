@@ -10,16 +10,10 @@ import SubtaskForm from "@/app/ui/components/tasks/subtask-form";
 import { Task as TaskTypes } from "@/types/global";
 
 interface TaskProps {
-  handleUpdateTask: (
-    id: string,
-    text: string,
-    category: string,
-    subtasks: string[]
-  ) => void;
   task: TaskTypes;
 }
 
-export default function Task({ handleUpdateTask, task }: TaskProps) {
+export default function Task({ task }: TaskProps) {
   const [isEditing, setIsEditing] = useState(false);
   const [showSubtaskForm, setShowSubtaskForm] = useState(false);
   const { id, parentId, text, category, completed, subtasks } = task;
@@ -27,24 +21,10 @@ export default function Task({ handleUpdateTask, task }: TaskProps) {
   const { mutate: deleteTask } = useDeleteTask();
   const { mutate: toggleTask } = useToggleTask();
 
-  const onUpdate = (
-    id: string,
-    text: string,
-    category: string,
-    subtasks: string[]
-  ) => {
-    handleUpdateTask(id, text, category, subtasks);
-    setIsEditing(false);
-  };
-
   return (
     <>
       {isEditing ? (
-        <CreateEditTaskForm
-          handleUpdateTask={onUpdate}
-          onClose={() => setIsEditing(false)}
-          task={task}
-        />
+        <CreateEditTaskForm onClose={() => setIsEditing(false)} task={task} />
       ) : (
         <li>
           <div className="group flex items-center py-1 px-2 rounded-lg hover:bg-[var(--color-surface-elevated-2)] hover:shadow-sm">
@@ -102,11 +82,7 @@ export default function Task({ handleUpdateTask, task }: TaskProps) {
           {subtasks && subtasks.length > 0 && (
             <ul className="pl-[var(--space-subtask-offset)]">
               {subtasks.map((subtask) => (
-                <Task
-                  key={subtask.id}
-                  handleUpdateTask={handleUpdateTask}
-                  task={subtask}
-                />
+                <Task key={subtask.id} task={subtask} />
               ))}
             </ul>
           )}
