@@ -1,44 +1,33 @@
 import { useEffect, useRef, useState } from "react";
-import { SvgAdd, SvgClose } from "@/app/ui/components/icons";
+
+import { SvgClose } from "@/app/ui/components/icons";
 import { Button } from "@/app/ui/components/shared/button";
 import Select from "@/app/ui/components/shared/select";
+
+import { useCreateTask } from "@/app/hooks/useCreateTask";
+import { useUpdateTask } from "@/app/hooks/useUpdateTask";
+
 import { Task } from "@/types/global";
-import { useCreateTask } from "@/app/hooks/useCreateTask"; // Import the custom hook
 
 interface CreateEditTaskForm {
-  defaultCategory?: string;
-  handleCreateTask?: (
-    text: string,
-    category: string,
-    subtasks: string[]
-  ) => void;
-  handleUpdateTask?: (
-    id: string,
-    text: string,
-    category: string,
-    subtasks: string[]
-  ) => void;
   onClose: () => void;
-  task?: Task;
+  task?: Task; // optional task to edit
 }
 
 export default function CreateEditTaskForm({
-  defaultCategory = "now",
-  handleCreateTask,
-  handleUpdateTask,
   onClose,
   task,
 }: CreateEditTaskForm) {
-  const { mutate: createTask, isPending } = useCreateTask();
   const [parentText, setParentText] = useState(task ? task.text : "");
-  const [subtasks, setSubtasks] = useState<string[]>([]);
+  const [subtasks, setSubtasks] = useState<Task[]>(task?.subtasks ?? []);
   const [newSubtask, setNewSubtask] = useState("");
-  const [category, setCategory] = useState(
-    task ? task.category : defaultCategory
-  );
-  const [showSubtaskForm, setShowSubtaskForm] = useState(false);
+  const [category, setCategory] = useState(task ? task.category : "now");
+
   const taskInputRef = useRef(null);
   const submitButtonRef = useRef(null);
+
+  const { mutate: createTask, isPending } = useCreateTask();
+  const { mutate: updateTask, isPending: isUpdating } = useUpdateTask();
 
   // Handle Escape key to close form
   useEffect(() => {
@@ -55,15 +44,9 @@ export default function CreateEditTaskForm({
     };
   }, [onClose]);
 
-  useEffect(() => {
-    if (!showSubtaskForm && subtasks.length > 0) {
-      submitButtonRef.current?.focus();
-    }
-  }, [showSubtaskForm, subtasks.length]);
-
   // Clean out empty subtasks
-  const removeEmptySubtasks = (taskArray: string[]) => {
-    const cleanedSubtasks = taskArray.filter((s) => s.trim() !== "");
+  const removeEmptySubtasks = (taskArray: Task[]) => {
+    const cleanedSubtasks = taskArray.filter((s) => s.text.trim() !== "");
     return cleanedSubtasks;
   };
 
@@ -75,33 +58,41 @@ export default function CreateEditTaskForm({
     }
   };
 
-  // Saves any substasks when user presses Save subtasks buttons
-  const saveSubtasks = (e: React.MouseEvent<HTMLButtonElement>) => {
-    e.preventDefault();
+  // Saves any substasks
+  const saveSubtask = () => {
     if (newSubtask.trim() !== "") {
       addSubtask();
     }
-
-    setShowSubtaskForm(false);
   };
 
   // Adds the subtask to the array
   const addSubtask = () => {
     if (newSubtask.trim() === "") return;
-    setSubtasks([...subtasks, newSubtask]);
+    setSubtasks([
+      ...subtasks,
+      {
+        id: `temp-${Date.now()}`,
+        text: newSubtask,
+        category: category,
+        completed: false,
+        parentId: task?.id ?? "",
+        subtasks: [],
+      },
+    ]);
+    console.log(newSubtask, subtasks);
     setNewSubtask("");
   };
 
   // Remove subtask if user removes focus with empty field
-  const handleSubtaskBlur = (index: number) => {
-    if (subtasks[index].trim() === "") {
+  const removeEmptySubtask = (index: number) => {
+    if (subtasks[index].text.trim() === "") {
       setSubtasks(subtasks.filter((_, i) => i !== index)); // Remove empty subtasks
     }
   };
 
   const updateSubtask = (index: number, value: string) => {
     const newSubtasks = [...subtasks];
-    newSubtasks[index] = value;
+    newSubtasks[index] = { ...newSubtasks[index], text: value };
     setSubtasks(newSubtasks);
   };
 
@@ -119,17 +110,32 @@ export default function CreateEditTaskForm({
     const cleanedSubtasks = removeEmptySubtasks(subtasks);
 
     if (task) {
-      handleUpdateTask(task.id, parentText, category, cleanedSubtasks);
+      // When updating, preserve the existing subtask structure
+      updateTask({
+        id: task.id,
+        text: parentText,
+        category: category,
+        subtasks: cleanedSubtasks.map((subtask) => ({
+          text: subtask.text,
+          category: subtask.category,
+          completed: subtask.completed,
+          parentId: subtask.parentId,
+        })),
+      });
     } else {
+      // When creating, convert subtasks to simple format
       createTask({
         text: parentText,
         category: category,
-        subtasks: cleanedSubtasks,
+        subtasks: cleanedSubtasks.map((subtask) => ({
+          text: subtask.text,
+          completed: false,
+          parentId: null,
+        })),
       });
     }
 
-    setParentText("");
-    setSubtasks([]);
+    onClose();
   };
 
   return (
@@ -149,116 +155,70 @@ export default function CreateEditTaskForm({
       />
 
       {/* Sub-task */}
-      {showSubtaskForm || subtasks.length > 0 ? (
-        <div className="px-3 pt-2 pb-3">
-          <div className="bg-[var(--color-surface-elevated-2)] border border-[var(--color-border)] rounded-lg">
-            <div className="flex items-center justify-between px-3 py-2 border-b border-[var(--color-border)]">
-              <div className="text-sm font-medium">Subtasks</div>
-              {!showSubtaskForm && (
-                <Button
-                  onClick={() => setShowSubtaskForm(true)}
-                  type="button"
-                  size="xsmall"
-                  variant="secondary"
-                >
-                  Add subtask
-                </Button>
-              )}
+      <div className="px-3 pt-2 pb-3">
+        <div className="bg-[var(--color-surface-elevated-2)] border border-[var(--color-border)] rounded-lg">
+          <div className="flex items-center justify-between px-3 py-2 border-b border-[var(--color-border)]">
+            <div className="text-sm font-medium">Subtasks</div>
+          </div>
+
+          {subtasks.map((subtask, index) => (
+            <div
+              key={index}
+              className="flex items-center gap-2 px-3 min-h-[44px]"
+            >
+              <input
+                type="text"
+                value={subtask.text}
+                placeholder="Enter subtask"
+                onChange={(e) => updateSubtask(index, e.target.value)}
+                className="bg-transparent text-medium w-full focus-visible:!outline-none"
+                onBlur={() => removeEmptySubtask(index)}
+              />
+              <Button
+                onClick={() => removeSubtask(index)}
+                ariaLabel="Remove subtask"
+                type="button"
+                icon={<SvgClose />}
+                size="small"
+                variant="ghost"
+              />
             </div>
+          ))}
 
-            {subtasks.map((subtask, index) => (
-              <div
-                key={index}
-                className="flex items-center gap-2 px-3 min-h-[44px]"
-              >
-                <input
-                  type="text"
-                  value={subtask}
-                  placeholder="Enter subtask"
-                  onChange={(e) => updateSubtask(index, e.target.value)}
-                  className="bg-transparent text-medium w-full focus-visible:!outline-none"
-                  onBlur={() => handleSubtaskBlur(index)}
-                />
-                <Button
-                  onClick={() => removeSubtask(index)}
-                  ariaLabel="Remove subtask"
-                  type="button"
-                  icon={<SvgClose />}
-                  size="small"
-                  variant="ghost"
-                />
-              </div>
-            ))}
-
-            {showSubtaskForm && (
-              <>
-                <div className="flex gap-2 px-3 py-2 min-h-[44px]">
-                  <input
-                    autoFocus
-                    type="text"
-                    value={newSubtask}
-                    placeholder="Enter subtask"
-                    onChange={(e) => setNewSubtask(e.target.value)}
-                    onKeyDown={(e) => handleKeyDown(e)}
-                    className="bg-transparent text-medium w-full focus-visible:!outline-none"
-                  />
-                </div>
-                <div className="flex gap-2 items-center justify-end px-3 py-2">
-                  <Button
-                    onClick={() => setShowSubtaskForm(false)}
-                    type="button"
-                    variant="secondary"
-                  >
-                    Cancel
-                  </Button>
-                  <Button
-                    onClick={(e) => saveSubtasks(e)}
-                    type="button"
-                    variant="primary"
-                  >
-                    Save subtask{subtasks.length > 1 && "s"}
-                  </Button>
-                </div>
-              </>
-            )}
+          <div className="flex gap-2 px-3 py-2 min-h-[44px]">
+            <input
+              type="text"
+              value={newSubtask}
+              placeholder="Enter subtask"
+              onChange={(e) => setNewSubtask(e.target.value)}
+              onKeyDown={(e) => handleKeyDown(e)}
+              onBlur={() => saveSubtask()}
+              className="bg-transparent text-medium w-full focus-visible:!outline-none"
+            />
           </div>
         </div>
-      ) : (
-        <div className="p-2">
-          <Button
-            onClick={() => setShowSubtaskForm(true)}
-            icon={<SvgAdd />}
-            type="button"
-            variant="secondary"
-            size="small"
-          >
-            Add sub-task
-          </Button>
-        </div>
-      )}
+      </div>
 
       {/* Actions */}
-      {!showSubtaskForm && (
-        <div className="flex items-center gap-4 justify-between px-3 py-2 border-t border-[var(--color-border)]">
-          <Select
-            value={category}
-            onChange={(e) => setCategory(e.target.value)}
-            className="h-8 bg-gray-100 border px-2 rounded-md"
-          >
-            <option value="now">Now</option>
-            <option value="soon">Soon</option>
-            <option value="later">Later</option>
-          </Select>
-          <div className="flex gap-2 items-center justify-end">
-            <Button onClick={onClose} type="button" variant="secondary">
-              Cancel
-            </Button>
-            <Button ref={submitButtonRef} type="submit" variant="primary">{`${
-              task ? "Update" : "Add"
-            } task`}</Button>
-          </div>
+      <div className="flex items-center gap-4 justify-between px-3 py-2 border-t border-[var(--color-border)]">
+        <Select
+          value={category}
+          onChange={(e) => setCategory(e.target.value)}
+          className="h-8 bg-gray-100 border px-2 rounded-md"
+        >
+          <option value="now">Now</option>
+          <option value="soon">Soon</option>
+          <option value="later">Later</option>
+        </Select>
+        <div className="flex gap-2 items-center justify-end">
+          <Button onClick={onClose} type="button" variant="secondary">
+            Cancel
+          </Button>
+          <Button ref={submitButtonRef} type="submit" variant="primary">{`${
+            task ? "Update" : "Add"
+          } task`}</Button>
         </div>
-      )}
+      </div>
     </form>
   );
 }

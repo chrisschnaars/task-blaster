@@ -25,10 +25,7 @@ export default function TasksSection({ category, tasks }: TasksSectionProps) {
       )}
 
       {showInlineForm ? (
-        <CreateEditTaskForm
-          defaultCategory={category}
-          onClose={() => setShowInlineForm(false)}
-        />
+        <CreateEditTaskForm onClose={() => setShowInlineForm(false)} />
       ) : (
         <button
           onClick={() => setShowInlineForm(true)}

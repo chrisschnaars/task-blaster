@@ -3,7 +3,11 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 type TaskInput = {
   text: string;
   category: string;
-  subtasks: string[];
+  subtasks: {
+    text: string;
+    completed: boolean;
+    parentId: string | null;
+  }[];
 };
 
 export const useCreateTask = () => {

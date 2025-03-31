@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { PrismaClient } from "@prisma/client";
+import { PrismaClient, Task } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
@@ -29,9 +29,9 @@ export async function POST(req: Request) {
 
       // Create and link subtasks
       if (subtasks.length > 0) {
-        const subtaskRecords = subtasks.map((subtask: string) => ({
-          text: subtask,
-          completed: false,
+        const subtaskRecords = subtasks.map((subtask: Task) => ({
+          text: subtask.text,
+          completed: subtask.completed,
           category: category,
           parentId: parent.id,
         }));
