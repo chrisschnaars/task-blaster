@@ -23,8 +23,8 @@ export default function CreateEditTaskForm({
   const [newSubtask, setNewSubtask] = useState("");
   const [category, setCategory] = useState(task ? task.category : "now");
 
-  const taskInputRef = useRef(null);
-  const submitButtonRef = useRef(null);
+  const taskInputRef = useRef<HTMLInputElement>(null);
+  const submitButtonRef = useRef<HTMLButtonElement>(null);
 
   const { mutate: createTask, isPending } = useCreateTask();
   const { mutate: updateTask, isPending: isUpdating } = useUpdateTask();
@@ -54,7 +54,13 @@ export default function CreateEditTaskForm({
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === "Enter") {
       e.preventDefault();
-      addSubtask();
+      if (e.target === taskInputRef.current) {
+        // If we're in the main task input, submit the form
+        submitButtonRef.current?.click();
+      } else {
+        // If we're in a subtask input, add the subtask
+        addSubtask();
+      }
     }
   };
 
@@ -79,7 +85,6 @@ export default function CreateEditTaskForm({
         subtasks: [],
       },
     ]);
-    console.log(newSubtask, subtasks);
     setNewSubtask("");
   };
 
@@ -151,6 +156,7 @@ export default function CreateEditTaskForm({
         placeholder="Add task..."
         type="text"
         value={parentText}
+        onKeyDown={handleKeyDown}
         required
       />
 
@@ -191,7 +197,7 @@ export default function CreateEditTaskForm({
               value={newSubtask}
               placeholder="Enter subtask"
               onChange={(e) => setNewSubtask(e.target.value)}
-              onKeyDown={(e) => handleKeyDown(e)}
+              onKeyDown={handleKeyDown}
               onBlur={() => saveSubtask()}
               className="bg-transparent text-medium w-full focus-visible:!outline-none"
             />
