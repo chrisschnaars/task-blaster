@@ -25,10 +25,6 @@ export default function Task({ task }: TaskProps) {
   const { mutate: toggleTask } = useToggleTask();
   const { mutate: updateTask } = useUpdateTask();
 
-  const handleTextClick = () => {
-    setIsEditing(true);
-  };
-
   const handleTextChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setEditedText(e.target.value);
   };
@@ -84,7 +80,7 @@ export default function Task({ task }: TaskProps) {
                 />
               ) : (
                 <span
-                  onClick={handleTextClick}
+                  onClick={() => setIsEditing(true)}
                   className={`text-lg cursor-pointer ${
                     completed && "line-through text-[var(--color-text-muted)]"
                   }`}
@@ -95,24 +91,25 @@ export default function Task({ task }: TaskProps) {
             </div>
             <div className="flex items-center gap-2">
               {!parentId && (
-                <Button
-                  ariaLabel="Add sub-task"
-                  hidden={true}
-                  icon={<SvgAdd />}
-                  onClick={() => setShowSubtaskForm(true)}
-                  size="xsmall"
-                  variant="ghost"
-                />
+                <>
+                  <Button
+                    ariaLabel="Add sub-task"
+                    hidden={true}
+                    icon={<SvgAdd />}
+                    onClick={() => setShowSubtaskForm(true)}
+                    size="xsmall"
+                    variant="ghost"
+                  />
+                  <Button
+                    ariaLabel="Edit task"
+                    hidden={true}
+                    icon={<SvgEdit />}
+                    onClick={() => setShowEditForm(true)}
+                    size="xsmall"
+                    variant="ghost"
+                  />
+                </>
               )}
-              <Button
-                ariaLabel="Edit task"
-                hidden={true}
-                icon={<SvgEdit />}
-                onClick={() => setShowEditForm(true)}
-                size="xsmall"
-                variant="ghost"
-              />
-
               <Button
                 ariaLabel="Delete task"
                 hidden={true}
